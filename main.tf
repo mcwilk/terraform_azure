@@ -16,8 +16,13 @@ resource "azurerm_virtual_network" "example_az_vnet" {
   address_space = ["10.0.0.0/16"]
 
   subnet {
-    name              = "HelloWorld_subnet_TF"
+    name              = "dev_subnet_TF"
     address_prefixes  = ["10.0.1.0/24"]
+  }
+
+  subnet {
+    name              = "test_subnet_TF"
+    address_prefixes  = ["10.0.2.0/24"]
   }
 
   tags = {
