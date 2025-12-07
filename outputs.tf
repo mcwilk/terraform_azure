@@ -17,3 +17,8 @@ output "azure_vnet_name" {
     description = "The name of the Azure Virtual Network"
     value       = azurerm_virtual_network.example_az_vnet.name
 }
+
+output "azure_vm_public_ip" {
+    description = "The Public IP address of the Azure Virtual Machine"
+    value       = azurerm_public_ip.dev01vm_pub_ip.ip_address
+}
