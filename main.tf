@@ -1,7 +1,7 @@
 # Create a resource group in Azure
 resource "azurerm_resource_group" "example_az_rg" {
   name     = "HelloWorld_RG_TF"
-  location = "East US"
+  location = "westus"
 
   tags = {
     environment = "TerraformDemo"
