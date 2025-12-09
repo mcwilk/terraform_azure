@@ -25,6 +25,14 @@ resource "azurerm_virtual_network" "example_az_vnet" {
   tags = var.tags
 }
 
+resource "azurerm_subnet" "example_az_vnet_subnets" {
+  for_each = var.subnets
+  resource_group_name = azurerm_resource_group.example_az_rg.name
+  virtual_network_name = azurerm_virtual_network.example_az_vnet.name
+  name = each.key
+  address_prefixes = each.value["address"]
+}
+
 # Create a virtual machine and all dependent resources
 resource "azurerm_public_ip" "dev01vm_pub_ip" {
   name = "dev01vm-pub-ip-TF"

@@ -56,3 +56,16 @@ variable "tags" {
     project     = "TerraformDemo"
   }
 }
+
+variable "subnets" {
+  description = "Subnets information"
+  type        = map(any)
+  default     = {
+    uat_subnet_TF = {
+      address = ["10.0.3.0/24"]
+    },
+    prod_subnet_TF = {
+      address = ["10.0.4.0/24"]
+    }
+  }
+}
