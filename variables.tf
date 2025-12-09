@@ -32,3 +32,27 @@ variable "enable_password_authentication" {
   type        = bool
   default     = false
 }
+
+variable "subnet_names" {
+  description = "List of subnet names"
+  type        = list(string)
+  default     = ["dev_subnet_TF", "test_subnet_TF"]
+}
+
+variable "subnet_addresses" {
+  description = "Dict of subnet addresses"
+  type        = map(list(string))
+  default     = {
+    var.subnet_names[0] = ["10.0.1.0/24"],
+    var.subnet_names[1] = ["10.0.2.0/24"]
+  }
+}
+
+variable "tags" {
+  description = "A map of tags to assign to resources"
+  type        = map(string)
+  default     = {
+    environment = "DEV",
+    project     = "TerraformDemo"
+  }
+}

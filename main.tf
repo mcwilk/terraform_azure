@@ -2,10 +2,7 @@
 resource "azurerm_resource_group" "example_az_rg" {
   name     = var.rg_name
   location = var.location
-
-  tags = {
-    environment = "TerraformDemo"
-  }
+  tags = var.tags
 }
 
 # Create a virtual network in the resource group
@@ -16,18 +13,16 @@ resource "azurerm_virtual_network" "example_az_vnet" {
   address_space = var.vnet_address_space
 
   subnet {
-    name              = "dev_subnet_TF"
-    address_prefixes  = ["10.0.1.0/24"]
+    name              = var.subnet_names[0]
+    address_prefixes  = var.subnet_addresses[name]
   }
 
   subnet {
-    name              = "test_subnet_TF"
-    address_prefixes  = ["10.0.2.0/24"]
+    name              = var.subnet_names[1]
+    address_prefixes  = var.subnet_addresses[name]
   }
 
-  tags = {
-    environment = "TerraformDemo"
-  }
+  tags = var.tags
 }
 
 # Create a virtual machine and all dependent resources
@@ -103,7 +98,5 @@ resource "azurerm_linux_virtual_machine" "dev01vm" {
     version   = "latest"
   }
 
-  tags = {
-    environment = "TerraformDemo"
-  }
+  tags = var.tags
 }
