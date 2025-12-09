@@ -43,8 +43,8 @@ variable "subnet_addresses" {
   description = "Dict of subnet addresses"
   type        = map(list(string))
   default     = {
-    var.subnet_names[0] = ["10.0.1.0/24"],
-    var.subnet_names[1] = ["10.0.2.0/24"]
+    "dev_subnet_TF" = ["10.0.1.0/24"],
+    "test_subnet_TF" = ["10.0.2.0/24"]
   }
 }
 

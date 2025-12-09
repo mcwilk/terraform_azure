@@ -14,12 +14,12 @@ resource "azurerm_virtual_network" "example_az_vnet" {
 
   subnet {
     name              = var.subnet_names[0]
-    address_prefixes  = var.subnet_addresses[name]
+    address_prefixes  = var.subnet_addresses[var.subnet_names[0]]
   }
 
   subnet {
     name              = var.subnet_names[1]
-    address_prefixes  = var.subnet_addresses[name]
+    address_prefixes  = var.subnet_addresses[var.subnet_names[1]]
   }
 
   tags = var.tags
