@@ -1,7 +1,7 @@
 # Create a resource group in Azure
 resource "azurerm_resource_group" "example_az_rg" {
-  name     = "HelloWorld_RG_TF"
-  location = "westus"
+  name     = var.rg_name
+  location = var.location
 
   tags = {
     environment = "TerraformDemo"
@@ -13,7 +13,7 @@ resource "azurerm_virtual_network" "example_az_vnet" {
   name          = "HelloWorld_VNET_TF"
   location      = azurerm_resource_group.example_az_rg.location
   resource_group_name = azurerm_resource_group.example_az_rg.name
-  address_space = ["10.0.0.0/16"]
+  address_space = var.vnet_address_space
 
   subnet {
     name              = "dev_subnet_TF"
@@ -75,11 +75,12 @@ resource "azurerm_network_interface_security_group_association" "nsg_association
 }
 
 resource "azurerm_linux_virtual_machine" "dev01vm" {
-  name                = "dev01vm-TF"
+  name                = var.vm_name
   resource_group_name = azurerm_resource_group.example_az_rg.name
   location            = azurerm_resource_group.example_az_rg.location
   size                = "Standard_B1s"
   admin_username      = "azureuser1"
+  disable_password_authentication = ! var.enable_password_authentication
 
   network_interface_ids = [
     azurerm_network_interface.dev01vm_nic.id,
