@@ -22,3 +22,9 @@ output "azure_vm_public_ip" {
     description = "The Public IP address of the Azure Virtual Machine"
     value       = azurerm_public_ip.dev01vm_pub_ip.ip_address
 }
+
+output "server_name" {
+    description = "The name of the Azure Virtual Machine"
+    value       = azurerm_linux_virtual_machine.dev01vm.name
+    sensitive   = true
+}

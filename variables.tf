@@ -6,7 +6,7 @@ variable "subscription_id" {
 variable "rg_name" {
   description = "The name of the Resource Group"
   type        = string
-  default     = "HelloWorld_RG_TFabc"
+  default     = "HelloWorld_RG_TF"
   validation {
     condition     = length(var.rg_name) > 10 && endswith(upper(var.rg_name), "RG_TF")
     error_message = "The resource group name must longer than 10 characters and end with RG_TF"
@@ -33,6 +33,7 @@ variable "vm_name" {
   description = "The name of the Virtual Machine"
   type        = string
   default     = "dev01vm-TF"
+  sensitive   = true
 }
 
 variable "enable_password_authentication" {
