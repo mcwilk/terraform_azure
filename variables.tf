@@ -17,7 +17,7 @@ variable "location" {
   description = "The Azure location where resources will be created"
   type        = string
   default     = "westus"
-  validation  {
+  validation {
     condition     = contains(["eastus", "westus", "centralus"], lower(var.location))
     error_message = "Location must be one of: eastus, westus, centralus"
   }
@@ -32,16 +32,16 @@ variable "vnet_address_space" {
 variable "firewall_rules" {
   description = "Firewall exceptions to connect to VM"
   type        = map(any)
-  default     = {
+  default = {
     SSH = {
-      name                    = "SSH"
-      priority                = "300"
-      destination_port_range  = 22
+      name                   = "SSH"
+      priority               = "300"
+      destination_port_range = 22
     },
     HTTPS = {
-      name                    = "HTTPS"
-      priority                = "400"
-      destination_port_range  = 443
+      name                   = "HTTPS"
+      priority               = "400"
+      destination_port_range = 443
     }
   }
 }
@@ -73,8 +73,8 @@ variable "subnet_names" {
 variable "subnet_addresses" {
   description = "Dict of subnet addresses"
   type        = map(list(string))
-  default     = {
-    "dev_subnet_TF" = ["10.0.1.0/24"],
+  default = {
+    "dev_subnet_TF"  = ["10.0.1.0/24"],
     "test_subnet_TF" = ["10.0.2.0/24"]
   }
 }
@@ -82,7 +82,7 @@ variable "subnet_addresses" {
 variable "tags" {
   description = "A map of tags to assign to resources"
   type        = map(string)
-  default     = {
+  default = {
     environment = "DEV",
     project     = "TerraformDemo"
   }
@@ -91,7 +91,7 @@ variable "tags" {
 variable "subnets" {
   description = "Subnets information"
   type        = map(any)
-  default     = {
+  default = {
     uat_subnet_TF = {
       address = ["10.0.3.0/24"]
     },
@@ -109,6 +109,6 @@ variable "prefix" {
 
 variable "env" {
   description = "Environment"
-  type = string
-  default = "dev"
+  type        = string
+  default     = "dev"
 }

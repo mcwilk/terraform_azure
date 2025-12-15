@@ -6,49 +6,49 @@ locals {
 resource "azurerm_resource_group" "example_az_rg" {
   name     = var.rg_name
   location = var.location
-  tags = var.tags
+  tags     = var.tags
 }
 
 # Create a virtual network in the resource group
 resource "azurerm_virtual_network" "example_az_vnet" {
-  name          = "HelloWorld_VNET_TF"
-  location      = azurerm_resource_group.example_az_rg.location
+  name                = "HelloWorld_VNET_TF"
+  location            = azurerm_resource_group.example_az_rg.location
   resource_group_name = azurerm_resource_group.example_az_rg.name
-  address_space = var.vnet_address_space
+  address_space       = var.vnet_address_space
 
   subnet {
-    name              = var.subnet_names[0]
-    address_prefixes  = var.subnet_addresses[var.subnet_names[0]]
+    name             = var.subnet_names[0]
+    address_prefixes = var.subnet_addresses[var.subnet_names[0]]
   }
 
   subnet {
-    name              = var.subnet_names[1]
-    address_prefixes  = var.subnet_addresses[var.subnet_names[1]]
+    name             = var.subnet_names[1]
+    address_prefixes = var.subnet_addresses[var.subnet_names[1]]
   }
 
   tags = var.tags
 }
 
 resource "azurerm_subnet" "example_az_vnet_subnets" {
-  for_each = var.subnets
-  resource_group_name = azurerm_resource_group.example_az_rg.name
+  for_each             = var.subnets
+  resource_group_name  = azurerm_resource_group.example_az_rg.name
   virtual_network_name = azurerm_virtual_network.example_az_vnet.name
-  name = each.key
-  address_prefixes = each.value["address"]
+  name                 = each.key
+  address_prefixes     = each.value["address"]
 }
 
 # Create a virtual machine and all dependent resources
 resource "azurerm_public_ip" "vm_pub_ip" {
-  count = var.number_of_vm
-  name = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index+1)}-pub-ip-TF"
+  count               = var.number_of_vm
+  name                = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index + 1)}-pub-ip-TF"
   resource_group_name = azurerm_resource_group.example_az_rg.name
-  location = azurerm_resource_group.example_az_rg.location
-  allocation_method = "Static"
+  location            = azurerm_resource_group.example_az_rg.location
+  allocation_method   = "Static"
 }
 
 resource "azurerm_network_interface" "vm_nic" {
   count               = var.number_of_vm
-  name                = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index+1)}-nic-TF"
+  name                = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index + 1)}-nic-TF"
   location            = azurerm_resource_group.example_az_rg.location
   resource_group_name = azurerm_resource_group.example_az_rg.name
 
@@ -64,8 +64,8 @@ resource "azurerm_network_security_group" "nsg_ssh" {
   name                = "${local.std_prefix}-${var.vm_name}-nsg-TF"
   location            = azurerm_resource_group.example_az_rg.location
   resource_group_name = azurerm_resource_group.example_az_rg.name
-  
-  dynamic security_rule {
+
+  dynamic "security_rule" {
     for_each = var.firewall_rules
     content {
       name                       = security_rule.value.name
@@ -88,13 +88,13 @@ resource "azurerm_network_interface_security_group_association" "nsg_association
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
-  count               = var.number_of_vm == 1 ? 0 : var.number_of_vm  # 2
-  name                = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index+1)}"
-  resource_group_name = azurerm_resource_group.example_az_rg.name
-  location            = azurerm_resource_group.example_az_rg.location
-  size                = "Standard_B1s"
-  admin_username      = "azureuser1"
-  disable_password_authentication = ! var.enable_password_authentication
+  count                           = var.number_of_vm == 1 ? 0 : var.number_of_vm # 2
+  name                            = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index + 1)}"
+  resource_group_name             = azurerm_resource_group.example_az_rg.name
+  location                        = azurerm_resource_group.example_az_rg.location
+  size                            = "Standard_B1s"
+  admin_username                  = "azureuser1"
+  disable_password_authentication = !var.enable_password_authentication
 
   network_interface_ids = [
     azurerm_network_interface.vm_nic[count.index].id,
@@ -106,7 +106,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 
   os_disk {
-    name                 = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index+1)}-osdisk-TF"
+    name                 = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index + 1)}-osdisk-TF"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
