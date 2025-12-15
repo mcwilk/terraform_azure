@@ -32,8 +32,13 @@ variable "vnet_address_space" {
 variable "vm_name" {
   description = "The name of the Virtual Machine"
   type        = string
-  default     = "dev01vm-TF"
-  sensitive   = true
+  default     = "vm-TF"
+}
+
+variable "number_of_vm" {
+  description = "Number of VM instances to create"
+  type        = number
+  default     = 2
 }
 
 variable "enable_password_authentication" {

@@ -38,15 +38,17 @@ resource "azurerm_subnet" "example_az_vnet_subnets" {
 }
 
 # Create a virtual machine and all dependent resources
-resource "azurerm_public_ip" "dev01vm_pub_ip" {
-  name = "${local.std_prefix}-${var.vm_name}-pub-ip-TF"
+resource "azurerm_public_ip" "vm_pub_ip" {
+  count = var.number_of_vm
+  name = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index+1)}-pub-ip-TF"
   resource_group_name = azurerm_resource_group.example_az_rg.name
   location = azurerm_resource_group.example_az_rg.location
   allocation_method = "Static"
 }
 
-resource "azurerm_network_interface" "dev01vm_nic" {
-  name                = "${local.std_prefix}-${var.vm_name}-nic-TF"
+resource "azurerm_network_interface" "vm_nic" {
+  count               = var.number_of_vm
+  name                = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index+1)}-nic-TF"
   location            = azurerm_resource_group.example_az_rg.location
   resource_group_name = azurerm_resource_group.example_az_rg.name
 
@@ -54,7 +56,7 @@ resource "azurerm_network_interface" "dev01vm_nic" {
     name                          = "internal"
     subnet_id                     = azurerm_virtual_network.example_az_vnet.subnet.*.id[0]
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.dev01vm_pub_ip.id
+    public_ip_address_id          = azurerm_public_ip.vm_pub_ip[count.index].id
   }
 }
 
@@ -77,12 +79,14 @@ resource "azurerm_network_security_group" "nsg_ssh" {
 }
 
 resource "azurerm_network_interface_security_group_association" "nsg_association" {
-  network_interface_id      = azurerm_network_interface.dev01vm_nic.id
+  count                     = var.number_of_vm
+  network_interface_id      = azurerm_network_interface.vm_nic[count.index].id
   network_security_group_id = azurerm_network_security_group.nsg_ssh.id
 }
 
-resource "azurerm_linux_virtual_machine" "dev01vm" {
-  name                = "${local.std_prefix}-${var.vm_name}-vm-TF"
+resource "azurerm_linux_virtual_machine" "vm" {
+  count               = var.number_of_vm == 1 ? 0 : var.number_of_vm  # 2
+  name                = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index+1)}"
   resource_group_name = azurerm_resource_group.example_az_rg.name
   location            = azurerm_resource_group.example_az_rg.location
   size                = "Standard_B1s"
@@ -90,7 +94,7 @@ resource "azurerm_linux_virtual_machine" "dev01vm" {
   disable_password_authentication = ! var.enable_password_authentication
 
   network_interface_ids = [
-    azurerm_network_interface.dev01vm_nic.id,
+    azurerm_network_interface.vm_nic[count.index].id,
   ]
 
   admin_ssh_key {
@@ -99,7 +103,7 @@ resource "azurerm_linux_virtual_machine" "dev01vm" {
   }
 
   os_disk {
-    name                 = "${local.std_prefix}-${var.vm_name}-osdisk-TF"
+    name                 = "${local.std_prefix}-${var.vm_name}-${format("%02s", count.index+1)}-osdisk-TF"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
