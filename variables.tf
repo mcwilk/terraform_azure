@@ -69,3 +69,15 @@ variable "subnets" {
     }
   }
 }
+
+variable "prefix" {
+  description = "Prefix for resource names"
+  type        = string
+  default     = "tfdemo"
+}
+
+variable "env" {
+  description = "Environment"
+  type = string
+  default = "dev"
+}

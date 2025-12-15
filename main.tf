@@ -1,3 +1,7 @@
+locals {
+  std_prefix = lower("${var.prefix}-${var.env}")
+}
+
 # Create a resource group in Azure
 resource "azurerm_resource_group" "example_az_rg" {
   name     = var.rg_name
@@ -35,14 +39,14 @@ resource "azurerm_subnet" "example_az_vnet_subnets" {
 
 # Create a virtual machine and all dependent resources
 resource "azurerm_public_ip" "dev01vm_pub_ip" {
-  name = "dev01vm-pub-ip-TF"
+  name = "${local.std_prefix}-${var.vm_name}-pub-ip-TF"
   resource_group_name = azurerm_resource_group.example_az_rg.name
   location = azurerm_resource_group.example_az_rg.location
   allocation_method = "Static"
 }
 
 resource "azurerm_network_interface" "dev01vm_nic" {
-  name                = "dev01vm-nic-TF"
+  name                = "${local.std_prefix}-${var.vm_name}-nic-TF"
   location            = azurerm_resource_group.example_az_rg.location
   resource_group_name = azurerm_resource_group.example_az_rg.name
 
@@ -55,7 +59,7 @@ resource "azurerm_network_interface" "dev01vm_nic" {
 }
 
 resource "azurerm_network_security_group" "nsg_ssh" {
-  name                = "dev01vm-nsg-TF"
+  name                = "${local.std_prefix}-${var.vm_name}-nsg-TF"
   location            = azurerm_resource_group.example_az_rg.location
   resource_group_name = azurerm_resource_group.example_az_rg.name
   
@@ -78,7 +82,7 @@ resource "azurerm_network_interface_security_group_association" "nsg_association
 }
 
 resource "azurerm_linux_virtual_machine" "dev01vm" {
-  name                = var.vm_name
+  name                = "${local.std_prefix}-${var.vm_name}-vm-TF"
   resource_group_name = azurerm_resource_group.example_az_rg.name
   location            = azurerm_resource_group.example_az_rg.location
   size                = "Standard_B1s"
@@ -95,6 +99,7 @@ resource "azurerm_linux_virtual_machine" "dev01vm" {
   }
 
   os_disk {
+    name                 = "${local.std_prefix}-${var.vm_name}-osdisk-TF"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
