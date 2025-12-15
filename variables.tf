@@ -29,6 +29,23 @@ variable "vnet_address_space" {
   default     = ["10.0.0.0/16"]
 }
 
+variable "firewall_rules" {
+  description = "Firewall exceptions to connect to VM"
+  type        = map(any)
+  default     = {
+    SSH = {
+      name                    = "SSH"
+      priority                = "300"
+      destination_port_range  = 22
+    },
+    HTTPS = {
+      name                    = "HTTPS"
+      priority                = "400"
+      destination_port_range  = 443
+    }
+  }
+}
+
 variable "vm_name" {
   description = "The name of the Virtual Machine"
   type        = string
